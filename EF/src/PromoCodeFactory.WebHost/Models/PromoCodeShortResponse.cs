@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PromoCodeFactory.Core.Domain.PromoCodeManagement;
+using System;
 
 namespace PromoCodeFactory.WebHost.Models
 {
@@ -15,5 +16,14 @@ namespace PromoCodeFactory.WebHost.Models
         public string EndDate { get; set; }
 
         public string PartnerName { get; set; }
+        public PromoCodeShortResponse(PromoCode source)
+        {
+            Id = source.Id;
+            Code = source.Code;
+            ServiceInfo = source.ServiceInfo;
+            BeginDate = source.BeginDate.ToShortDateString();
+            EndDate = source.EndDate.ToShortDateString();
+            PartnerName = source.PartnerName;
+        }
     }
 }
