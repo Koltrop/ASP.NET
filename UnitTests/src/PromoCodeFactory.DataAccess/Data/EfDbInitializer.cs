@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace PromoCodeFactory.DataAccess.Data
 {
@@ -11,22 +11,28 @@ namespace PromoCodeFactory.DataAccess.Data
         {
             _dataContext = dataContext;
         }
-        
+
         public void InitializeDb()
         {
-            _dataContext.Database.EnsureDeleted();
-            _dataContext.Database.EnsureCreated();
-            
-            _dataContext.AddRange(FakeDataFactory.Employees);
+            if (_dataContext.Roles.Any())
+                return;
+
+            foreach (var item in FakeDataFactory.Roles)
+            {
+                _dataContext.Add(item);
+            }
             _dataContext.SaveChanges();
-            
-            _dataContext.AddRange(FakeDataFactory.Preferences);
-            _dataContext.SaveChanges();
-            
-            _dataContext.AddRange(FakeDataFactory.Customers);
-            _dataContext.SaveChanges();
-            
-            _dataContext.AddRange(FakeDataFactory.Partners);
+
+            foreach (var item in FakeDataFactory.Employees)
+            {
+                item.Role = _dataContext.Roles.Find(item.Role.Id);
+                _dataContext.Add(item);
+            }
+
+            foreach (var item in FakeDataFactory.Preferences)
+            {
+                _dataContext.Add(item);
+            }
             _dataContext.SaveChanges();
         }
     }
