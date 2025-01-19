@@ -1,0 +1,36 @@
+services:
+    web-api:
+        build: 
+            context: .
+            dockerfile: PromoCodeFactory.WebHost/Dockerfile
+        ports:
+            - 8080:8080
+            - 8081:8081
+        environment:
+            ConnectionStrings__PromoCodeFactoryDb: Host=postgresdb;Database=promocode_factory_db;Username=postgres;Password=password;Port=5432
+        networks:
+            - postgres
+
+    postgresdb:
+        image: postgres  
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+            PGDATA: /data/postgres
+        volumes:
+            - postgres:/data/postgres
+        ports:
+            - "5432:5433"
+        networks:
+            - postgres
+
+networks:
+    postgres:
+        driver: bridge
+
+volumes:
+    postgres:
+        
+        
+    
+    
