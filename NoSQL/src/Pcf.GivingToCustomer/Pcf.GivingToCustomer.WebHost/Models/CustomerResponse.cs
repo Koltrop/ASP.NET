@@ -25,12 +25,34 @@ namespace Pcf.GivingToCustomer.WebHost.Models
             Email = customer.Email;
             FirstName = customer.FirstName;
             LastName = customer.LastName;
-            Preferences = customer.Preferences.Select(x => new PreferenceResponse()
+            Preferences = customer.CustomerPreferences.Select(x => new PreferenceResponse()
             {
                 Id = x.PreferenceId,
                 Name = x.Preference.Name
             }).ToList();
             PromoCodes = customer.PromoCodes.Select(x => new PromoCodeShortResponse()
+                {
+                    Id = x.PromoCode.Id,
+                    Code = x.PromoCode.Code,
+                    BeginDate = x.PromoCode.BeginDate.ToString("yyyy-MM-dd"),
+                    EndDate = x.PromoCode.EndDate.ToString("yyyy-MM-dd"),
+                    PartnerId = x.PromoCode.PartnerId,
+                    ServiceInfo = x.PromoCode.ServiceInfo
+                }).ToList();
+        }        
+        
+        public CustomerResponse(Customer customer, IEnumerable<PromoCodeCustomer> promocodeCustomers)
+        {
+            Id = customer.Id;
+            Email = customer.Email;
+            FirstName = customer.FirstName;
+            LastName = customer.LastName;
+            Preferences = customer.Preferences.Select(x => new PreferenceResponse()
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
+            PromoCodes = promocodeCustomers.Select(x => new PromoCodeShortResponse()
                 {
                     Id = x.PromoCode.Id,
                     Code = x.PromoCode.Code,

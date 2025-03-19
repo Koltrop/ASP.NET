@@ -38,7 +38,7 @@ namespace Pcf.GivingToCustomer.IntegrationTests.Data
                         Email = "ivan_sergeev@mail.ru",
                         FirstName = "Иван",
                         LastName = "Петров",
-                        Preferences = new List<CustomerPreference>()
+                        CustomerPreferences = new List<CustomerPreference>()
                         {
                             new CustomerPreference()
                             {

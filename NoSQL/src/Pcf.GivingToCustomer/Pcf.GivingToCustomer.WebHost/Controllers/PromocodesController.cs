@@ -21,13 +21,17 @@ namespace Pcf.GivingToCustomer.WebHost.Controllers
         private readonly IRepository<PromoCode> _promoCodesRepository;
         private readonly IRepository<Preference> _preferencesRepository;
         private readonly IRepository<Customer> _customersRepository;
+        private readonly IRepository<PromoCodeCustomer> promocodeCustomerRepository;
 
         public PromocodesController(IRepository<PromoCode> promoCodesRepository, 
-            IRepository<Preference> preferencesRepository, IRepository<Customer> customersRepository)
+            IRepository<Preference> preferencesRepository, 
+            IRepository<Customer> customersRepository,
+            IRepository<PromoCodeCustomer> promocodeCustomerRepository)
         {
             _promoCodesRepository = promoCodesRepository;
             _preferencesRepository = preferencesRepository;
             _customersRepository = customersRepository;
+            this.promocodeCustomerRepository = promocodeCustomerRepository;
         }
         
         /// <summary>
@@ -55,6 +59,7 @@ namespace Pcf.GivingToCustomer.WebHost.Controllers
         /// <summary>
         /// Создать промокод и выдать его клиентам с указанным предпочтением
         /// </summary>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> GivePromoCodesToCustomersWithPreferenceAsync(GivePromoCodeRequest request)
@@ -70,11 +75,19 @@ namespace Pcf.GivingToCustomer.WebHost.Controllers
             //  Получаем клиентов с этим предпочтением:
             var customers = await _customersRepository
                 .GetWhere(d => d.Preferences.Any(x =>
-                    x.Preference.Id == preference.Id));
+                    x.Id == preference.Id));
+
+            if (!customers.Any())
+                return NoContent();
 
             PromoCode promoCode = PromoCodeMapper.MapFromModel(request, preference, customers);
-
             await _promoCodesRepository.AddAsync(promoCode);
+
+            foreach (var customer in customers)
+            {
+                var promocodeCustomer = PromocodeCustomerMapper.MapFromModel(promoCode, customer);
+                await promocodeCustomerRepository.AddAsync(promocodeCustomer);
+            }
 
             return CreatedAtAction(nameof(GetPromocodesAsync), new { }, null);
         }

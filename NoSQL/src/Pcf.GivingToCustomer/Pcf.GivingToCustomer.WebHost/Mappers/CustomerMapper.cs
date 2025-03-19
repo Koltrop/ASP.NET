@@ -22,7 +22,7 @@ namespace Pcf.GivingToCustomer.WebHost.Mappers
             customer.LastName = model.LastName;
             customer.Email = model.Email;
 
-            customer.Preferences = preferences.Select(x => new CustomerPreference()
+            customer.CustomerPreferences = preferences.Select(x => new CustomerPreference()
             {
                 CustomerId = customer.Id,
                 Preference = x,
@@ -31,5 +31,13 @@ namespace Pcf.GivingToCustomer.WebHost.Mappers
             
             return customer;
         }
-    }
+
+        public static Customer MapToMongoModel(CreateOrEditCustomerRequest model, IEnumerable<Preference> preferences, Customer customer = null)
+        {
+            var mappedModel = MapFromModel(model, preferences, customer);
+            mappedModel.Preferences = preferences.ToList();
+
+            return mappedModel;
+        }
+}
 }

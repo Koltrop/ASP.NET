@@ -20,12 +20,15 @@ namespace Pcf.GivingToCustomer.WebHost.Controllers
     {
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<Preference> _preferenceRepository;
+        private readonly IRepository<PromoCodeCustomer> _promocodeCustomerRepository;
 
         public CustomersController(IRepository<Customer> customerRepository, 
-            IRepository<Preference> preferenceRepository)
+            IRepository<Preference> preferenceRepository,
+            IRepository<PromoCodeCustomer> promocodeCustomerRepository)
         {
             _customerRepository = customerRepository;
             _preferenceRepository = preferenceRepository;
+            _promocodeCustomerRepository = promocodeCustomerRepository;
         }
         
         /// <summary>
@@ -57,8 +60,11 @@ namespace Pcf.GivingToCustomer.WebHost.Controllers
         public async Task<ActionResult<CustomerResponse>> GetCustomerAsync(Guid id)
         {
             var customer =  await _customerRepository.GetByIdAsync(id);
+            if (customer is null)
+                return NotFound();
 
-            var response = new CustomerResponse(customer);
+            var promocodeCustomers = await _promocodeCustomerRepository.GetWhere(x => x.CustomerId == id);
+            var response = new CustomerResponse(customer, promocodeCustomers);
 
             return Ok(response);
         }
@@ -74,8 +80,8 @@ namespace Pcf.GivingToCustomer.WebHost.Controllers
             var preferences = await _preferenceRepository
                 .GetRangeByIdsAsync(request.PreferenceIds);
 
-            Customer customer = CustomerMapper.MapFromModel(request, preferences);
-            
+            Customer customer = CustomerMapper.MapToMongoModel(request, preferences);
+
             await _customerRepository.AddAsync(customer);
 
             return CreatedAtAction(nameof(GetCustomerAsync), new {id = customer.Id}, customer.Id);
@@ -96,7 +102,7 @@ namespace Pcf.GivingToCustomer.WebHost.Controllers
             
             var preferences = await _preferenceRepository.GetRangeByIdsAsync(request.PreferenceIds);
             
-            CustomerMapper.MapFromModel(request, preferences, customer);
+            CustomerMapper.MapToMongoModel(request, preferences, customer);
 
             await _customerRepository.UpdateAsync(customer);
 

@@ -30,12 +30,15 @@ namespace Pcf.GivingToCustomer.DataAccess
                 .HasKey(bc => new {bc.CustomerId, bc.PreferenceId});
             modelBuilder.Entity<CustomerPreference>()
                 .HasOne(bc => bc.Customer)
-                .WithMany(b => b.Preferences)
+                .WithMany(b => b.CustomerPreferences)
                 .HasForeignKey(bc => bc.CustomerId);  
             modelBuilder.Entity<CustomerPreference>()
                 .HasOne(bc => bc.Preference)
                 .WithMany()
-                .HasForeignKey(bc => bc.PreferenceId); 
+                .HasForeignKey(bc => bc.PreferenceId);
+
+            modelBuilder.Entity<Customer>()
+                .Ignore(x => x.CustomerPreferences);
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace Pcf.GivingToCustomer.Core.Domain
 {
     public class Customer
-        :BaseEntity
+        : BaseEntity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -12,8 +13,12 @@ namespace Pcf.GivingToCustomer.Core.Domain
 
         public string Email { get; set; }
 
-        public virtual ICollection<CustomerPreference> Preferences { get; set; }
+        [BsonIgnore]
+        public virtual ICollection<CustomerPreference> CustomerPreferences { get; set; }
         
+        public ICollection<Preference> Preferences { get; set; }
+
+        [BsonIgnore]
         public virtual ICollection<PromoCodeCustomer> PromoCodes { get; set; }
     }
 }

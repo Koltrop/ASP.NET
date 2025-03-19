@@ -55,7 +55,7 @@ namespace Pcf.GivingToCustomer.IntegrationTests.Components.WebHost.Controllers
             actual.Email.Should().Be(request.Email);
             actual.FirstName.Should().Be(request.FirstName);
             actual.LastName.Should().Be(request.LastName);
-            actual.Preferences.Should()
+            actual.CustomerPreferences.Should()
                 .ContainSingle()
                 .And
                 .Contain(x => x.PreferenceId == preferenceId);
