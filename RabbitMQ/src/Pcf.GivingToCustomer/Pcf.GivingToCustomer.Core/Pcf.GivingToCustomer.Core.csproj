@@ -4,4 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Pcf.Core.Integration\Pcf.Core.Integration.csproj" />
+    </ItemGroup>
+
 </Project>

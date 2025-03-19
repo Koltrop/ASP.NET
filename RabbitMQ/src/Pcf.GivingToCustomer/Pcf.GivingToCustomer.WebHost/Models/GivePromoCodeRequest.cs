@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pcf.Core.Integration;
+using System;
 
 namespace Pcf.GivingToCustomer.WebHost.Models
 {
@@ -17,5 +18,17 @@ namespace Pcf.GivingToCustomer.WebHost.Models
         public string BeginDate { get; set; }
 
         public string EndDate { get; set; }
+
+        public PromocodeDto ToPromocodeDto()
+        {
+            return new ()
+            {
+                ServiceInfo = ServiceInfo,
+                PartnerId = PartnerId,
+                PreferenceId = PreferenceId,
+                BeginDate = DateTime.Parse(BeginDate),
+                EndDate = DateTime.Parse(EndDate)
+            };
+        }
     }
 }
